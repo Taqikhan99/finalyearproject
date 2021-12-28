@@ -66,7 +66,7 @@ class UserInsertion:
         except:
             print('Already saved for this user')
     
-    def insertUserLoc(self,cursor,user_ids,locId,userlocs):
+    def insertUserLoc(self,cursor,user_ids,locId):
         cursor=cursor
         # if(UserInsertion.run==0):
             # currentTime=datetime.datetime.now()

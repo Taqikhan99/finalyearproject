@@ -19,14 +19,16 @@ class DatasetGenerator:
         # writing images in the user folder
         try:
             time.sleep(0.1)    
-            if DatasetGenerator.imgid<=5:    
+            if self.imgid<=10: 
+                # img=self.convertToGray(img)   
                 img=self.resizeImg(img)
-                savingPath="images/user_"+str(userid)+"/user_"+str(userid)+"."+str(DatasetGenerator.imgid)+".jpg"
+                savingPath="images/user_"+str(userid)+"/user_"+str(userid)+"."+str(self.imgid)+".jpg"
                 
                 cv2.imwrite(savingPath,img)
             else:
                 print("Images saved!")
-            DatasetGenerator.imgid+=1 
-                 
-        except:
-            print('Check please')
+            self.imgid+=1
+            return self.imgid         
+        except Exception as e:
+            print('Check please ',e)
+        
