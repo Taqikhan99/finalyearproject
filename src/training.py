@@ -35,4 +35,4 @@ def trainingImages():
                 names.append(person)
             else:
                 print(person + "/" + person_img + " was skipped and can't be used for training")
-    print(names)
+    

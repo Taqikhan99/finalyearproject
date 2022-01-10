@@ -1,14 +1,12 @@
 import cv2,numpy as np
 from face_recognition.api import face_locations
-# from training import names,encodings
+from training import names,encodings
 import face_recognition
 
-
-def recognize(frame,userids,names,encodings,cursor):
+def recognize(frame,userids):
     
     userImg=0
-    userId=0
-    cursor=cursor
+    userId=0  
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -16,7 +14,7 @@ def recognize(frame,userids,names,encodings,cursor):
     rgb_small_frame = small_frame[:, :, ::-1]
         
     # Find all the faces and face encodings in the current frame of video
-    face_locations = face_recognition.face_locations(rgb_small_frame,number_of_times_to_upsample=2,model="hog")
+    face_locations = face_recognition.face_locations(rgb_small_frame,number_of_times_to_upsample=2,model="cnn")
     face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations,num_jitters=3)
     # print(len(face_locations))
     
@@ -28,11 +26,6 @@ def recognize(frame,userids,names,encodings,cursor):
             matches = face_recognition.compare_faces(encodings, face_encoding,tolerance=0.5)
             name = "unknown"
         
-            # # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_face_names[first_match_index]
-            # Or instead, use the known face with the smallest distance to the new face
             face_distances = face_recognition.face_distance(encodings, face_encoding)
             
             best_match_index = np.argmin(face_distances)
@@ -65,8 +58,6 @@ def recognize(frame,userids,names,encodings,cursor):
             cv2.rectangle(frame, (left-10, top-10), (right+10, bottom+10), (0, 0, 255), 1)
             
             userImg=frame[top-10:bottom+10,left-5:right+5]
-           
-            
 
         else:
             pass
@@ -78,3 +69,8 @@ def recognize(frame,userids,names,encodings,cursor):
 
 
 
+# # If a match was found in known_face_encodings, just use the first one.
+            # if True in matches:
+            #     first_match_index = matches.index(True)
+            #     name = known_face_names[first_match_index]
+            # Or instead, use the known face with the smallest distance to the new face
