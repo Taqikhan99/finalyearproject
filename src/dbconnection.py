@@ -9,6 +9,9 @@ class DbConnection:
     def connectToDb(self):
 
         # creating connection
-        connection = pyodbc.connect('DRIVER={SQL Server};SERVER=TAQILAPTOP\SQLEXPRESS2019;DATABASE=TaqiComputers_DB;Trusted_Connection=yes;')
+        connection = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=TAQILAPTOP\SQLEXPRESS2019;DATABASE=TaqiComputers_DB;Trusted_Connection=yes;')
+        connection.autocommit=True
         self.cursor=connection.cursor()
         print("Connection successful")
+        
+    

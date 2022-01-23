@@ -1,5 +1,5 @@
 import face_recognition
-from sklearn import svm
+
 import os,cv2
 
 # Training the SVC classifier
@@ -34,5 +34,6 @@ def trainingImages():
                 encodings.append(face_enc)
                 names.append(person)
             else:
-                print(person + "/" + person_img + " was skipped and can't be used for training")
+                # print(person + "/" + person_img + " was skipped and can't be used for training")
+                pass
     

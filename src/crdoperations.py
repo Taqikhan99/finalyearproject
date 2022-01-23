@@ -17,7 +17,7 @@ class CursorGet:
 # getting all user records
 class UsersGetting:
     userIds=[]
-
+    
     def __init__(self,cursor) -> None:
         self.cursor=cursor
     def getAllUsers(self):
@@ -34,8 +34,7 @@ class UsersGetting:
     
         userdata=self.getAllUsers()
         for row in range(len(userdata)):
-            # personIds.append(row[0])
-            # personNames.append(row[1])
+           
             self.userIds.append( userdata[row][0])
         return self.userIds
 
@@ -46,15 +45,35 @@ class UsersGetting:
         return personLocs
 
     def getUserLocationsById(self,userId):
+        
         self.cursor.execute('select distinct locid,Max(time) from tbPersonLocation where personId=?',userId,' Group by locId order by Max(time) desc,locId')
         personLoc=self.cursor.fetchall()
+        
         return personLoc
 
     def getLastLocationId(self,userId):
-        self.cursor.execute('select top 1 locId from tbPersonLocation where personId= ? order by time desc',userId)
-        rows=self.cursor.fetchall()
-        for row in rows:
-            return row.locId
+        try:
+            self.cursor.execute('select top 1 locId from tbPersonLocation where personId= ? order by time desc',userId)
+            rows=self.cursor.fetchall()
+            for row in rows:
+                return row.locId
+        except Exception as e:
+            print('Error: ',e)
+
+    def getUserLocationNames(self,userId):
+        userLocations=[]
+        try:
+            self.cursor.execute('''select tbLocation.locName from tbLocation
+                                    inner join tbPersonLocation
+                                    on tbLocation.locId=tbPersonLocation.locId
+                                    where tbPersonLocation.personId=?''',userId)
+            rows=self.cursor.fetchall()
+            for row in rows:
+                userLocations.append(row.locName)
+            return userLocations;
+        except Exception as e:
+            print('error1:',e)
+
 
 # insert new user in database
 
@@ -79,18 +98,22 @@ class UserInsertion:
     def insertUserLoc(self,user_id,locId):
         
         now = datetime.now()
-        print('Now =: ',now)
+        
         currentTime=now.strftime("%H:%M:%S")
-
+        print(currentTime)
     
         self.cursor.execute('''
                 insert into tbPersonLocation(locId,personId,time)
                 Values
                 (?,?,?)
         ''',(locId,user_id,currentTime))
+        
         self.cursor.commit()
         # cursor.close()
+
+        
 # conn=DbConnection()
+# conn.connectToDb() 
 # cursor=conn.getCursor()       
 # users=UsersGetting(cursor)
-# users.getLastLocationId(1)           
+# print(users.getUserLocationNames(1))         

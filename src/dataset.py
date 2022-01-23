@@ -22,7 +22,7 @@ class DatasetGenerator:
         # writing images in the user folder
         try:
             time.sleep(0.1)    
-            if self.imgid<10: 
+            if self.imgid<=5: 
                 img=self.convertToGray(img)   
                 img=self.resizeImg(img)
                 flipImg=self.flipImg(img)
