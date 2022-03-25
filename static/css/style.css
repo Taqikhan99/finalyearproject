@@ -1,0 +1,27 @@
+.bgbody{
+    background: rgb(2,0,36);
+background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,212,255,1) 0%, rgba(9,9,121,1) 100%);
+
+}
+.bgnav{
+    background: rgb(2,0,36);
+background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(29,128,148,1) 0%, rgba(39,39,105,1) 100%);
+}
+.mainsec{
+    margin-top: 20vh !important;
+    
+}
+.card{
+    width: 90%;
+}
+.nav-link{
+    color: white !important;
+    transition: all 0.5s ease-in !important;
+    padding: 5px 20px;
+    margin: 5px 10px;
+    border-radius: 5px;
+}
+.nav-link:hover{
+    background-color: rgb(224, 224, 125) !important;
+    color: black !important;
+}

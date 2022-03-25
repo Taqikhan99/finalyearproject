@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock %}
+{% block content %}
+<div class="container mt-2">
+    <h1 class="text-center">User Records</h1>
+    <!-- <img  src="{{url_for('static',filename='images/user_4/user_4.2.jpg')}}" alt=""> -->
+    <br>
+    <!-- our table -->
+    <table class="table table-bordered table-hover ">
+        <thead class="thead-dark border">
+          <tr>
+            {% for header in headings%}
+            <th class="col-md-3 text-center">{{header}}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody class="border">
+          {% for row in data %}
+            <tr>
+            
+            <td  class="text-center">{{row[0]}}</td>
+            <td class="text-center">{{row[1]}}</td>
+            <!-- <td>{{row[2]}}</td> -->
+            <td class="text-center"><img  style="width: 80px;height:80px;border-radius:10px" src="{{url_for('static',filename=row[2])}}" alt="image"></td>
+          
+            </tr>       
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+{% endblock %}
