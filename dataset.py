@@ -40,7 +40,7 @@ class DatasetGenerator:
         Path("static/images/user_{}".format(userid)).mkdir(parents=True,exist_ok=True)
         
         try:
-            time.sleep(0.025)    
+               
             if self.imgid<=3:
 
                 img=self.convertToGray(img)   

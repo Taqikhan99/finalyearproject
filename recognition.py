@@ -13,7 +13,7 @@ import face_recognition,pickle
 
 def recognize(frame,userids):
     
-    # distance=findFacedistance(frame)
+    
     userImg=0
     userId=0  
     # Resize frame of video to 1/4 size for faster face recognition processing
@@ -21,11 +21,11 @@ def recognize(frame,userids):
     
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_small_frame = small_frame[:, :, ::-1]
-    # distance=findFacedistance(frame)    
+     
     # Find all the faces and face encodings in the current frame of video
-    face_locations = face_recognition.face_locations(rgb_small_frame,number_of_times_to_upsample=2,model="hog")
+    face_locations = face_recognition.face_locations(rgb_small_frame,number_of_times_to_upsample=3,model="hog")
     
-    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations,num_jitters=3)
+    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations,num_jitters=4)
     # print(len(face_locations))
     
     face_names = []
@@ -33,13 +33,15 @@ def recognize(frame,userids):
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             
-            matches = face_recognition.compare_faces(encodings, face_encoding,tolerance=0.5)
+            matches = face_recognition.compare_faces(encodings, face_encoding,tolerance=0.6)
             name = "unknown"
         
             face_distances = face_recognition.face_distance(encodings, face_encoding)
             
             best_match_index = np.argmin(face_distances)
-            print(1-face_distances[best_match_index])
+            matchPercent=(1-face_distances[best_match_index])*100
+            print(round(matchPercent,2))
+            
             if matches[best_match_index]:
                 name = names[best_match_index]
                 userId=int(name.split("_")[1])
@@ -72,8 +74,11 @@ def recognize(frame,userids):
             userImg=frame[top-10:bottom+10,left-5:right+5]
 
         else:
-            pass
-            cv2.rectangle(frame, (left-1, top), (right+1, bottom), (0, 255, 0), 1)             
+            
+            
+            cv2.rectangle(frame, (left-1, top), (right+1, bottom), (0, 255, 0), 1)
+            
+                         
             
     return userImg,userId,frame
     

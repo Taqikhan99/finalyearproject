@@ -4,6 +4,7 @@ from turtle import heading
 from flask import Flask, redirect,render_template, request,flash,session
 from flask_sqlalchemy import SQLAlchemy
 import os
+from crdoperations import UsersGetting
 
 app=Flask(__name__)
 db=SQLAlchemy(app)
@@ -50,6 +51,16 @@ def homePage():
     
     else:
         return redirect('/')
+
+
+@app.route('/user/<user_id>')
+def userDetail(user_id):
+    print(user_id)
+    users=UsersGetting(cursor)
+    allRecords=users.getAllLocationRecord(user_id)
+    print(allRecords)
+    return render_template("userdetail.html",uid=user_id)
+
 
 
 

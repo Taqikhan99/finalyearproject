@@ -1,6 +1,7 @@
 import face_recognition
 import pickle
 import os,cv2
+from numpy import save
 
 # Training the SVC classifier
 
@@ -34,13 +35,18 @@ def trainingImages():
                 encodings.append(face_enc)
                 names.append(person)
                 all_face_encodings[str(person)]=face_recognition.face_encodings(face)[0]
+                
             else:
                 # print(person + "/" + person_img + " was skipped and can't be used for training")
                 pass
     print(names)
+  
         
 # trainingImages()
 
 def saveEncodings():
     with open('dataset_faces.dat', 'wb') as f:
         pickle.dump(all_face_encodings, f)
+        print("done")
+
+# trainingImages()

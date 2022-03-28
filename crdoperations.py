@@ -1,4 +1,5 @@
 
+
 from time import strftime
 import time
 from dbconnection import DbConnection
@@ -38,6 +39,12 @@ class UsersGetting:
             self.userIds.append( userdata[row][0])
         return self.userIds
 
+
+    def getAllLocationRecord(self,userid):
+        self.cursor.execute('Select * from tbPersonLocation where personId=?',userid)
+        personLocs=self.cursor.fetchall()
+        return personLocs
+
     def getUserLocations(self):
         
         self.cursor.execute('Select locId,personId from tbPersonLocation')
@@ -60,6 +67,19 @@ class UsersGetting:
         except Exception as e:
             print('Error: ',e)
 
+    def getUserLastLocTime(self,userId):
+        try:
+            self.cursor.execute('select top 1 date,time from tbPersonLocation where personId= ? order by time desc',userId)
+            rows=self.cursor.fetchall()
+            for row in rows:
+                date=row.date
+                time=row.time
+                uDateTime=date+" "+time
+                return uDateTime
+        except Exception as e:
+            print('Error: ',e)
+
+
     def getUserLocationNames(self,userId):
         userLocations=[]
         try:
@@ -70,9 +90,26 @@ class UsersGetting:
             rows=self.cursor.fetchall()
             for row in rows:
                 userLocations.append(row.locName)
-            return userLocations;
+            return userLocations
         except Exception as e:
             print('error1:',e)
+
+
+
+        # get lat long of areaLocation
+    def getLatLong(self,locationId):
+
+        self.cursor.execute("select latitude,longitude from tbLocation where tbLocation.locId=?",locationId)
+        data=self.cursor.fetchall()
+     
+        lat=data[0][0]
+        long=data[0][1]
+        long=float(long)
+        
+        lat=float(lat)
+        
+        
+        return lat,long
 
 
 # insert new user in database
@@ -95,25 +132,48 @@ class UserInsertion:
         except:
             print('Already saved for this user')
     
-    def insertUserLoc(self,user_id,locId):
+    def insertUserLoc(self,user_id,locId,lat,long):
         
         now = datetime.now()
         
         currentTime=now.strftime("%H:%M:%S")
-        print(currentTime)
+        currentDate= now.strftime("%d-%m-%y") 
+        print(currentDate)
     
         self.cursor.execute('''
-                insert into tbPersonLocation(locId,personId,time)
+                insert into tbPersonLocation(locId,personId,date,time,latitude,longitude)
                 Values
-                (?,?,?)
-        ''',(locId,user_id,currentTime))
+                (?,?,?,?,?,?)
+        ''',(locId,user_id,currentDate,currentTime,lat,long))
         
         self.cursor.commit()
         # cursor.close()
 
-        
+def calcTimeDifference(timeDate):
+    fmt = '%d-%m-%y %H:%M:%S'
+    tstamp1 = datetime.strptime(timeDate, fmt)
+    tstamp2 = datetime.now().strftime("%d-%m-%y %H:%M:%S")
+    tstamp2 =datetime.strptime(tstamp2,fmt)
+     
+    elapsedTime=tstamp2-tstamp1
+    
+    tdMins=int(round(elapsedTime.total_seconds()/60))
+    return tdMins
+
+
 # conn=DbConnection()
 # conn.connectToDb() 
 # cursor=conn.getCursor()       
 # users=UsersGetting(cursor)
-# print(users.getUserLocationNames(1))         
+# uDate,uTime=users.getUserLastLocTime(5)
+# uDateTime=uDate+" "+uTime
+# print(uDateTime)
+# calcTimeDifference(uDateTime)
+
+
+
+
+
+
+
+ 
