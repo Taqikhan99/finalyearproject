@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %} userDetail {% endblock %}
+
+{% block content %}
+
+<div class="container mt-3 border p-5">
+
+<div class="row">
+    <div class="col"><h2 class="text-center">User {{uid}}</h2></div>
+    
+    
+
+</div>
+<div class="row">
+    <div class="col ">
+        <table cellpadding="4"  class="mx-auto mt-3 ">
+            <tr >
+              <th class="col-md-3">Date</th>
+              <th class="col-md-3">Time</th>
+              <th class="col-md-3">Latitude</th>
+              <th class="col-md-3">Longitude</th>
+            </tr>
+            {% for row in userLocationRecord%}
+    
+            <tr>
+              <td>{{row[2]}}</td>
+              <td>{{row[3]}}</td>
+              <td>{{row[4]}}</td>
+              <td>{{row[5]}}</td>
+            </tr>
+           
+        {% endfor %}
+            
+            
+          </table>
+    </div>
+</div> 
+<div class="row">
+
+  
+  
+</div>   
+
+
+</div>
+
+<h2 class="text-center">Plotting Locations</h2>
+{% include "map.html" %}
+{% endblock %}

@@ -1,7 +1,7 @@
 from turtle import distance
 import cv2,numpy as np
 # from face_recognition.api import face_locations
-from training import names,encodings
+from .training import names,encodings
 import face_recognition,pickle
 # from faceDistance import findFacedistance
 
@@ -25,7 +25,7 @@ def recognize(frame,userids):
     # Find all the faces and face encodings in the current frame of video
     face_locations = face_recognition.face_locations(rgb_small_frame,number_of_times_to_upsample=3,model="hog")
     
-    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations,num_jitters=4)
+    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations,num_jitters=3)
     # print(len(face_locations))
     
     face_names = []
@@ -80,6 +80,7 @@ def recognize(frame,userids):
             
                          
             
+    # return userImg,userId,frame
     return userImg,userId,frame
     
 

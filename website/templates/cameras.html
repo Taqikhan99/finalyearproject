@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock %}
+{% block content %}
+
+<h2 class="text-center">
+    Cameras Feed
+</h2>
+<div class="container">
+    <div class="jumbotron p-3">
+        {% for camNo in cameraList %}
+        <img src="{{url_for('views.video',id=camNo)}}"  width="40%">
+        {% endfor %}
+    </div>
+    
+</div>
+
+
+{% endblock %}

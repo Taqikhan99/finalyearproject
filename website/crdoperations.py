@@ -2,7 +2,7 @@
 
 from time import strftime
 import time
-from dbconnection import DbConnection
+from .dbconnection import DbConnection
 from datetime import datetime 
 
 
@@ -60,7 +60,7 @@ class UsersGetting:
 
     def getLastLocationId(self,userId):
         try:
-            self.cursor.execute('select top 1 locId from tbPersonLocation where personId= ? order by time desc',userId)
+            self.cursor.execute('select top 1 locId from tbPersonLocation where personId= ? order by date,time desc',userId)
             rows=self.cursor.fetchall()
             for row in rows:
                 return row.locId
