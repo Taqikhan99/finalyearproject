@@ -23,7 +23,7 @@ def homePage():
     if 'userid' in session:
         cursor.execute('Select * from tbPerson')
         personData = cursor.fetchall()
-        print(personData)
+        # print(personData)
         imagesPath = []
         basePath = 'website/static/images'
         train_dir = os.listdir(basePath)
@@ -46,13 +46,13 @@ def userDetail(user_id):
     allRecords = users.getAllLocationRecord(user_id)
     print(allRecords)
     location = predictNewLocation(cursor, user_id)
-    map = folium.Map(location=[24.79387658, 67.1351927], min_zoom=18, zoom_start=18, height=350, width=600, min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', top='10%', zoom_control=False)
+    map = folium.Map(location=[24.79387658, 67.1351927], min_zoom=18, zoom_start=14, height=350, width=600, min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', top='10%', zoom_control=True)
     for row in allRecords:
         print(row)
-        tooltip = ''
+        tooltip = str(row[1])
         folium.Circle(location=[
          row[(-2)], row[(-1)]],
-          radius=5,
+          radius=2,
           popup=(str(row[0])),
           color='#3186cc',
           fill=True,
@@ -144,7 +144,7 @@ def predictNewLocation(cursor, userId):
     df = pd.DataFrame((np.reshape(userLocations, (df.shape[0], 3))), columns=['locid', 'locName', 'time'])
     df['time'] = df['time'].astype(float)
     print(df['time'])
-    X_train, X_test, y_train, y_test = train_test_split((df[['time']]), (df.locName), train_size=0.9)
+    X_train, X_test, y_train, y_test = train_test_split((df[['time']]), (df.locName), train_size=0.8)
     model = linear_model.LogisticRegression()
     model.fit(X=X_train, y=y_train)
     newLoc = model.predict(X_test)

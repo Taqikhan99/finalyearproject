@@ -1,14 +1,14 @@
 from threading import Thread
 import cv2
 import numpy as np
-
+from datetime import datetime
 from .dbconnection import DbConnection
 from .test2 import face_data2
 from .training import trainingImages
 
 from .dataset import DatasetGenerator
 from .recognition import recognize
-from .crdoperations import UserInsertion,UsersGetting, calcTimeDifference
+from .crdoperations import UserInsertion,UsersGetting
 from geopy.distance import distance,Distance
 # from faceDistance import findDistance
 
@@ -72,12 +72,13 @@ def mainWorking(video_capture,camId,userids,cursor):
             userImg,idReturned,frame=recognize(frame,savedUserIds)
             print("id: ",idReturned)
             # getLastLoc
-            userLastLocation=users.getLastLocationId(idReturned)
-            print(userLastLocation)
-            userLastTime=users.getUserLastLocTime(idReturned)
-            # timeDiff=calcTimeDifference(userLastTime)
-            # print(userLastTime)
+            userLastLocation,userLastTime=users.getLastLocationId(idReturned)
+            print(userLastLocation,userLastTime)
+            # userLastTime=users.getUserLastLocTime(idReturned)
             
+            timeDiff=calcTimeDifference(userLastTime)
+            
+            print(timeDiff)
             # check if id returned doesnot match with records
             
             if(idReturned>0 and idReturned not in savedUserIds):
@@ -103,7 +104,7 @@ def mainWorking(video_capture,camId,userids,cursor):
                 lat,long=getUserLatLong(distance,latitude,longitude)
                 # cv2.putText(frame, str(lat)+str(long), ( 10,15), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 1)
                 
-                if userLastLocation !=cameraLocId :
+                if userLastLocation !=cameraLocId or timeDiff>5:
                     userInsertObj.insertUserLoc(idReturned,cameraLocId,lat,long)
                     # print("Location Saved")
                 else:
@@ -125,7 +126,7 @@ def mainWorking(video_capture,camId,userids,cursor):
 
 
 
-
+# calculate lat long
 
 def getUserLatLong(dist,lat,long):
     latlong=distance(feet=dist).destination((lat,long),bearing=180)
@@ -140,7 +141,17 @@ def getUserLatLong(dist,lat,long):
 
 
 
-
-
+# calculate time difference
+def calcTimeDifference(timeDate):
+    fmt = '%d-%m-%y %H:%M:%S'
+    tstamp1 = datetime.strptime(timeDate, fmt)
+    tstamp2 = datetime.now().strftime("%d-%m-%y %H:%M:%S")
+    tstamp2 =datetime.strptime(tstamp2,fmt)
+    # print(tstamp1," | ",tstamp2) 
+    elapsedTime=tstamp2-tstamp1
+    
+    tdMins=int(round(elapsedTime.total_seconds()/60))
+    print("mins: ",tdMins)
+    return tdMins
 
 

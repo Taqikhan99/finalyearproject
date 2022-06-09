@@ -13,7 +13,7 @@ def createApp():
 
     app.secret_key=os.urandom(20)
 
-    from .views import views
+    from .views2 import views
     app.register_blueprint(views,url_prefix='/')
     return app
 

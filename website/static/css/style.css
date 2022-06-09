@@ -25,3 +25,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(29,128,148,1) 0%, rgb
     background-color: rgb(224, 224, 125) !important;
     color: black !important;
 }
+.latlongtable{
+    height: 300px;
+    
+}

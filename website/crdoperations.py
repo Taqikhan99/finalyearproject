@@ -58,18 +58,22 @@ class UsersGetting:
         
         return personLoc
 
+
+    # get last location id and last date time
+
     def getLastLocationId(self,userId):
         try:
-            self.cursor.execute('select top 1 locId from tbPersonLocation where personId= ? order by date,time desc',userId)
+            self.cursor.execute('select top 1 locId,date,time from tbPersonLocation where personId= ? order by substring(date,3,4) desc,substring(date,0,1) desc,time desc',userId)
             rows=self.cursor.fetchall()
             for row in rows:
-                return row.locId
+                dateTime=row.date+" "+row.time
+                return row.locId,dateTime
         except Exception as e:
             print('Error: ',e)
 
     def getUserLastLocTime(self,userId):
         try:
-            self.cursor.execute('select top 1 date,time from tbPersonLocation where personId= ? order by time desc',userId)
+            self.cursor.execute('select top 1 date,time from tbPersonLocation where personId= ? order by substring(date,3,4) desc,substring(date,0,1) desc,time desc',userId)
             rows=self.cursor.fetchall()
             for row in rows:
                 date=row.date
@@ -93,6 +97,28 @@ class UsersGetting:
             return userLocations
         except Exception as e:
             print('error1:',e)
+
+
+
+    def getUserLocationNameOrdered(self, userId):
+        userLocations = []
+        try:
+            self.cursor.execute('select tbPersonLocation.locId,tbLocation.locName,SUBSTRING (time,0,6) from tbLocation inner join tbPersonLocation on tbLocation.locId=tbPersonLocation.locId where tbPersonLocation.personId=? order by time asc', userId)
+            
+            rows = self.cursor.fetchall()
+            for row in rows:
+                row[2] = row[2].split(':')
+                row[2] = '.'.join(row[2])
+                print(row)
+                userLocations.append(row)
+
+            return userLocations
+        except Exception as e:
+            try:
+                print('error1:', e)
+            finally:
+                e = None
+                del e
 
 
 
@@ -149,16 +175,7 @@ class UserInsertion:
         self.cursor.commit()
         # cursor.close()
 
-def calcTimeDifference(timeDate):
-    fmt = '%d-%m-%y %H:%M:%S'
-    tstamp1 = datetime.strptime(timeDate, fmt)
-    tstamp2 = datetime.now().strftime("%d-%m-%y %H:%M:%S")
-    tstamp2 =datetime.strptime(tstamp2,fmt)
-     
-    elapsedTime=tstamp2-tstamp1
-    
-    tdMins=int(round(elapsedTime.total_seconds()/60))
-    return tdMins
+
 
 
 # conn=DbConnection()
