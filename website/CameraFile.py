@@ -54,7 +54,7 @@ def mainWorking(video_capture,camId,userids,cursor):
     # image id at start
     imgid=1
     # setting cameraId
-    cameraLocId=camId+1
+    cameraLocId=camId+2
     savedUserIds=userids
     
     # get camera lat long
@@ -67,15 +67,16 @@ def mainWorking(video_capture,camId,userids,cursor):
             
             # Grab a single frame of video
             sucess, frame = video_capture.read()
-            print(sucess)
+            # print(sucess)
             # print(savedUserIds)
             userImg,idReturned,frame=recognize(frame,savedUserIds)
-            print("id: ",idReturned)
+            # print("id: ",idReturned)
             # getLastLoc
-            userLastLocation,userLastTime=users.getLastLocationId(idReturned)
-            print(userLastLocation,userLastTime)
-            # userLastTime=users.getUserLastLocTime(idReturned)
-            
+            userLastLocation=users.getLastLocationId(idReturned)
+            print(userLastLocation)
+
+            userLastTime=users.getUserLastLocTime(idReturned)
+            # print(userLastTime)
             timeDiff=calcTimeDifference(userLastTime)
             
             print(timeDiff)
@@ -84,8 +85,8 @@ def mainWorking(video_capture,camId,userids,cursor):
             if(idReturned>0 and idReturned not in savedUserIds):
                 
                 imgid=generator.generateDataset(userImg,idReturned)
-                            
-                if imgid>3:
+                print("Image id: ",imgid)            
+                if imgid>2:
                     
                     savedUserIds.append(idReturned)
                     # retrain the data
@@ -104,8 +105,11 @@ def mainWorking(video_capture,camId,userids,cursor):
                 lat,long=getUserLatLong(distance,latitude,longitude)
                 # cv2.putText(frame, str(lat)+str(long), ( 10,15), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 1)
                 
-                if userLastLocation !=cameraLocId or timeDiff>5:
+                if userLastLocation !=cameraLocId or timeDiff>2:
                     userInsertObj.insertUserLoc(idReturned,cameraLocId,lat,long)
+                    udate=userLastTime.split(' ')
+                    print(udate[0])
+                    userInsertObj.updateTimespend(idReturned,cameraLocId,udate[0],udate[1],timeDiff)    
                     # print("Location Saved")
                 else:
                     print('user already at same location')
@@ -119,7 +123,7 @@ def mainWorking(video_capture,camId,userids,cursor):
             # if cv2.waitKey(1) & 0xFF == ord('z'):
             #     break   
     except Exception as e:
-        print(e) 
+        print("Some error: ",e) 
     # Release handle to the webcam
     video_capture.release()
     cv2.destroyAllWindows()
@@ -143,15 +147,19 @@ def getUserLatLong(dist,lat,long):
 
 # calculate time difference
 def calcTimeDifference(timeDate):
-    fmt = '%d-%m-%y %H:%M:%S'
-    tstamp1 = datetime.strptime(timeDate, fmt)
-    tstamp2 = datetime.now().strftime("%d-%m-%y %H:%M:%S")
-    tstamp2 =datetime.strptime(tstamp2,fmt)
-    # print(tstamp1," | ",tstamp2) 
-    elapsedTime=tstamp2-tstamp1
-    
-    tdMins=int(round(elapsedTime.total_seconds()/60))
-    print("mins: ",tdMins)
+    tdMins=0
+    try:
+        fmt = '%d-%m-%y %H:%M:%S'
+        tstamp1 = datetime.strptime(timeDate, fmt)
+        tstamp2 = datetime.now().strftime("%d-%m-%y %H:%M:%S")
+        tstamp2 =datetime.strptime(tstamp2,fmt)
+        # print(tstamp1," | ",tstamp2) 
+        elapsedTime=tstamp2-tstamp1
+        
+        tdMins=int(round(elapsedTime.total_seconds()/60))
+        print("mins: ",tdMins)
+    except:
+        pass
     return tdMins
 
 

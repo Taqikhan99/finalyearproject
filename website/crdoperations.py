@@ -40,6 +40,13 @@ class UsersGetting:
         return self.userIds
 
 
+
+    def getCurrentDateLocations(self,userid):
+        self.cursor.execute("select   * from tbPersonLocation where personId=? and date=format(GETDATE(),'dd-MM-yy') order by cast(substring(date,4,2)as int )desc, cast(substring(date,1,2)as int) desc,time desc",userid)
+        personLocs=self.cursor.fetchall()
+        return personLocs
+
+
     def getAllLocationRecord(self,userid):
         self.cursor.execute('Select * from tbPersonLocation where personId=?',userid)
         personLocs=self.cursor.fetchall()
@@ -58,22 +65,23 @@ class UsersGetting:
         
         return personLoc
 
+    # getting timespend by user group by locations
 
     # get last location id and last date time
 
     def getLastLocationId(self,userId):
         try:
-            self.cursor.execute('select top 1 locId,date,time from tbPersonLocation where personId= ? order by substring(date,3,4) desc,substring(date,0,1) desc,time desc',userId)
+            self.cursor.execute('select top 1 locId,date,time from tbPersonLocation where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc',userId)
             rows=self.cursor.fetchall()
             for row in rows:
-                dateTime=row.date+" "+row.time
-                return row.locId,dateTime
+                
+                return row.locId
         except Exception as e:
             print('Error: ',e)
 
     def getUserLastLocTime(self,userId):
         try:
-            self.cursor.execute('select top 1 date,time from tbPersonLocation where personId= ? order by substring(date,3,4) desc,substring(date,0,1) desc,time desc',userId)
+            self.cursor.execute('select top 1 date,time from tbPersonLocation where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc',userId)
             rows=self.cursor.fetchall()
             for row in rows:
                 date=row.date
@@ -103,7 +111,7 @@ class UsersGetting:
     def getUserLocationNameOrdered(self, userId):
         userLocations = []
         try:
-            self.cursor.execute('select tbPersonLocation.locId,tbLocation.locName,SUBSTRING (time,0,6) from tbLocation inner join tbPersonLocation on tbLocation.locId=tbPersonLocation.locId where tbPersonLocation.personId=? order by time asc', userId)
+            self.cursor.execute('select top 50 tbPersonLocation.locId,tbLocation.locName,SUBSTRING (time,0,6) from tbLocation inner join tbPersonLocation on tbLocation.locId=tbPersonLocation.locId where tbPersonLocation.personId=? order by substring(date,4,2) desc,substring(date,1,2) desc, time desc', userId)
             
             rows = self.cursor.fetchall()
             for row in rows:
@@ -175,6 +183,14 @@ class UserInsertion:
         self.cursor.commit()
         # cursor.close()
 
+    def updateTimespend(self,userId,locId,date,time,timespend):
+
+        self.cursor.execute('''
+        update tbPersonLocation 
+        set timespend=? where date=? and time=? and personId=? and locId=?
+        ''',(timespend,date,time,userId,locId))
+        self.cursor.commit()
+
 
 
 
@@ -182,6 +198,10 @@ class UserInsertion:
 # conn.connectToDb() 
 # cursor=conn.getCursor()       
 # users=UsersGetting(cursor)
+
+
+# lastime=users.getUserLastLocTime(4)
+# print(lastime)
 # uDate,uTime=users.getUserLastLocTime(5)
 # uDateTime=uDate+" "+uTime
 # print(uDateTime)

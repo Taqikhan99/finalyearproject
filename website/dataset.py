@@ -37,30 +37,32 @@ class DatasetGenerator:
     def generateDataset(self,img, userid):
         
         # creating a folder for a user
-        Path("static/images/user_{}".format(userid)).mkdir(parents=True,exist_ok=True)
+        Path("website/static/images/user_{}".format(userid)).mkdir(parents=True,exist_ok=True)
         
         try:
                
-            if self.imgid<=3:
+            while self.imgid<=3:
 
-                img=self.convertToGray(img)   
+                # img=self.convertToGray(img)   
                 img=self.resizeImg(img)
                 flipImg=self.flipImg(img)
                 sharpenedImg=self.sharpen(img)
                 # shiftedImg=self.imgShift(img)
 
-                savingPath="static/images/user_"+str(userid)+"/user_"+str(userid)+"."+str(self.imgid)+".jpg"
-                savingFlippedPath="static/images/user_"+str(userid)+"/user_"+str(userid)+"_flip."+str(self.imgid)+".jpg"
-                savingSharpendPath="static/images/user_"+str(userid)+"/user_"+str(userid)+"_sharpen."+str(self.imgid)+".jpg"
+                savingPath="website/static/images/user_"+str(userid)+"/user_"+str(userid)+"."+str(self.imgid)+".jpg"
+                savingFlippedPath="website/static/images/user_"+str(userid)+"/user_"+str(userid)+"_flip."+str(self.imgid)+".jpg"
+                savingSharpendPath="website/static/images/user_"+str(userid)+"/user_"+str(userid)+"_sharpen."+str(self.imgid)+".jpg"
                 # savingShiftedPath="images/user_"+str(userid)+"/user_"+str(userid)+"_shifted."+str(self.imgid)+".jpg"
 
                 cv2.imwrite(savingPath,img)
                 cv2.imwrite(savingFlippedPath,flipImg)
                 cv2.imwrite(savingSharpendPath,sharpenedImg)
                 # cv2.imwrite(savingShiftedPath,shiftedImg)
-            else:
-                print("Images saved!")
-            self.imgid+=1
+                self.imgid+=1
+            
+            print("Images saved!")
+            
+            # print("self.imgid: ",self.imgid)
             return self.imgid         
         except Exception as e:
             print('Check please ',e)

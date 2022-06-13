@@ -6,19 +6,24 @@
 <div class="container mt-3 border p-5">
 
 <div class="row">
-    <div class="col"><h2 class="text-center">User {{uid}}</h2></div>
-    
-    
+    <div class="col"><h2 class="text-center">User {{uid}}</h2>
+    <h3>Next location={{location[0]}}</h3>
+    <br>
+    <div class="text-center">
+      
+      <img src="{{url_for('views.barchart2',userid=uid)}}" alt="">
+    </div>
+    </div>  
 
 </div>
 <div class="row">
-    <div class="col latlongtable">
+    <!-- <div class="col latlongtable border border-primary">
         <table cellpadding="4"  class="mx-auto mt-3 ">
             <tr >
-              <th class="col-md-3">Date</th>
-              <th class="col-md-3">Time</th>
-              <th class="col-md-3">Latitude</th>
-              <th class="col-md-3">Longitude</th>
+              <th class="col-md-2 mx-3">Date</th>
+              <th class="col-md-2 mx-3">Time</th>
+              <th class="col-md-2 mx-3">Latitude</th>
+              <th class="col-md-2 mx-3">Longitude</th>
             </tr>
             {% for row in userLocationRecord%}
     
@@ -33,7 +38,7 @@
             
             
           </table>
-    </div>
+    </div> -->
 </div> 
 <div class="row">
 

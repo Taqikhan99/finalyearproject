@@ -13,9 +13,9 @@ import face_recognition,pickle
 
 def recognize(frame,userids):
     
-    
+    print("UserIds: ",userids)
     userImg=0
-    userId=0  
+    newuserId=0  
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
     
@@ -29,7 +29,7 @@ def recognize(frame,userids):
     # print(len(face_locations))
     
     face_names = []
-    try:
+    try: 
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             
@@ -40,11 +40,11 @@ def recognize(frame,userids):
             
             best_match_index = np.argmin(face_distances)
             matchPercent=(1-face_distances[best_match_index])*100
-            print(round(matchPercent,2))
+            # print(round(matchPercent,2))
             
             if matches[best_match_index]:
                 name = names[best_match_index]
-                userId=int(name.split("_")[1])
+                newuserId=int(name.split("_")[1])
                 
             face_names.append(name)
             
@@ -66,8 +66,8 @@ def recognize(frame,userids):
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, top-15), font, 0.5, (255, 255, 255), 1)
         if name=="unknown":
-            userId=userids[-1]+1
-            
+            newuserId=userids[-1]+1
+            print(newuserId)
             cv2.putText(frame, name, (left + 6, top-15), font, 0.5, (255, 255, 255), 1)
             cv2.rectangle(frame, (left-10, top-10), (right+10, bottom+10), (0, 0, 255), 1)
             
@@ -79,9 +79,9 @@ def recognize(frame,userids):
             cv2.rectangle(frame, (left-1, top), (right+1, bottom), (0, 255, 0), 1)
             
                          
-            
+    # print("New user id: ",newuserId)        
     # return userImg,userId,frame
-    return userImg,userId,frame
+    return userImg,newuserId,frame
     
 
 

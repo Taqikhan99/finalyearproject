@@ -1,13 +1,21 @@
+
 from time import sleep, time
+from tkinter import Canvas
 from cv2 import VideoCapture
-from flask import Blueprint, redirect, render_template, request, flash, session, Response
+from flask import Blueprint, redirect, render_template, request, flash, send_file, session, Response
 import pandas as pd, numpy as np
 from . import connectToDb
 from .crdoperations import UsersGetting
-import folium, cv2, os
+import folium, cv2, os,io
 from .CameraFile import cameraThread, mainWorking
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
+import matplotlib
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+matplotlib.use('Agg')
+
 cursor = connectToDb()
 views = Blueprint('views', __name__)
 camerasList = [
@@ -16,6 +24,8 @@ camerasList = [
 def find_camera(list_id):
     return camerasList[int(list_id)]
 
+
+# homepage route
 
 @views.route('/home')
 def homePage():
@@ -39,29 +49,36 @@ def homePage():
     return redirect('/')
 
 
+
+# user detail page route
+
 @views.route('/user/<user_id>')
 def userDetail(user_id):
-    print(user_id)
+    # print(user_id)
     users = UsersGetting(cursor)
     allRecords = users.getAllLocationRecord(user_id)
     print(allRecords)
     location = predictNewLocation(cursor, user_id)
-    map = folium.Map(location=[24.79387658, 67.1351927], min_zoom=18, zoom_start=14, height=350, width=600, min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', top='10%', zoom_control=True)
-    for row in allRecords:
-        print(row)
-        tooltip = str(row[1])
+
+    currentDateRecords=users.getCurrentDateLocations(user_id)
+
+    map = folium.Map(location=[24.79387658, 67.1351927], max_zoom=18, zoom_start=12, height=360, width='60%', min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', bottom='5%', zoom_control=True)
+    for row in currentDateRecords:
+        # print(row)
+        # tooltip = str(row[1])
         folium.Circle(location=[
-         row[(-2)], row[(-1)]],
+         row[-2], row[-1]],
           radius=2,
           popup=(str(row[0])),
           color='#3186cc',
           fill=True,
           fill_color='#3186cc').add_to(map)
-        map.save('website/templates/map.html')
+    map.save('website/templates/map.html')
 
     return render_template('userdetail.html', uid=user_id, userLocationRecord=allRecords, location=location)
 
 
+# login route
 @views.route('/')
 def login():
     return render_template('login.html')
@@ -79,6 +96,7 @@ def login_validation():
     return render_template('login.html')
 
 
+# signup route
 @views.route('/signup')
 def signup():
     return render_template('signup.html')
@@ -99,6 +117,7 @@ def signUser():
     return redirect('/signup')
 
 
+# logging out
 @views.route('/logout')
 def logout():
     session.pop('userid')
@@ -107,16 +126,19 @@ def logout():
     return redirect('/')
 
 
+
+# camera feed route
 @views.route('/cameras')
 def cameras():
     return render_template('cameras.html', cameraList=camerasList)
 
-
+# getting video
 @views.route('/video/<string:id>', methods=['GET', 'POST'])
 def video(id):
     return Response((genFrames(id)), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+# receive frames from
 def genFrames(camid):
     cursor1 = connectToDb()
     users = UsersGetting(cursor1)
@@ -136,6 +158,35 @@ def genFrames(camid):
         
 
 
+
+     
+
+@views.route('/barchart2/<string:userid>',methods=['GET','POST'])
+def barchart2(userid):
+
+    users = UsersGetting(cursor)
+    users.getCurrentDateLocations(userid)
+
+    print('H:',userid)
+    company=['Google','Facebook','Twitter']
+    revenue=[74,56,28]
+    ypos=np.arange(len(company))
+    fig,ax=plt.subplots(figsize=(6,4))
+    ax.set_title("User Daily Record")
+    # ax.legend()
+    ax.set_xticks(ypos,company)
+    ax.bar(ypos,revenue)
+    canvas=FigureCanvas(fig)
+    img=io.BytesIO()
+    fig.savefig(img)
+    img.seek(0)
+    return send_file(img,mimetype='img/png')
+
+
+
+
+
+# predict next location
 def predictNewLocation(cursor, userId):
     userLocations = UsersGetting(cursor).getUserLocationNameOrdered(userId)
     print(len(userLocations))
@@ -143,7 +194,7 @@ def predictNewLocation(cursor, userId):
 
     df = pd.DataFrame((np.reshape(userLocations, (df.shape[0], 3))), columns=['locid', 'locName', 'time'])
     df['time'] = df['time'].astype(float)
-    print(df['time'])
+    # print(df['time'])
     X_train, X_test, y_train, y_test = train_test_split((df[['time']]), (df.locName), train_size=0.8)
     model = linear_model.LogisticRegression()
     model.fit(X=X_train, y=y_train)
