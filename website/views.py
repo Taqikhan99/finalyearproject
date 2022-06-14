@@ -152,3 +152,30 @@ def genFrames(camid):
                         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     except Exception as e:
         print(e)
+
+# @views.route('/user/<user_id>',methods=['GET','POST'])
+# def userDetail(user_id):
+#     # print(user_id)
+    
+#     users = UsersGetting(cursor)
+#     allRecords = users.getAllLocationRecord(user_id)
+#     print(allRecords)
+#     location = predictNewLocation(cursor, user_id)
+
+#     currentDateRecords=users.getCurrentDateLocations(user_id)
+
+#     map = folium.Map(location=[24.79387658, 67.1351927], max_zoom=18, zoom_start=12, height=300, width='60%', min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', top='5%', zoom_control=True)
+#     for row in currentDateRecords:
+#         # print(row)
+#         # tooltip = str(row[1])
+#         folium.Circle(location=[
+#          row[-3], row[-2]],
+#           radius=2,
+#           popup=(str(row[0])),
+#           color='#3186cc',
+#           fill=True,
+#           fill_color='#3186cc').add_to(map)
+    
+#     map.save('website/templates/map.html')
+
+#     return render_template('userdetail.html', uid=user_id, userLocationRecord=allRecords, location=location)

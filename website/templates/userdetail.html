@@ -7,11 +7,20 @@
 
 <div class="row">
     <div class="col"><h2 class="text-center">User {{uid}}</h2>
-    <h3>Next location={{location[0]}}</h3>
+     <br> 
+    <h3>Next location=TucShop</h3>
+    {{sdate}}
+    <form action="" method="post">
+      <input type="date" name="cdate">
+      <input type="submit" value="select">
+    </form>
+    
     <br>
     <div class="text-center">
       
-      <img src="{{url_for('views.barchart2',userid=uid)}}" alt="">
+      <img src="{{url_for('views.barchart2',userid=uid,sdate=sdate)}}" alt="">
+      <img src="{{timeSpendChart}}" alt="">
+      <br>
     </div>
     </div>  
 
@@ -50,5 +59,11 @@
 </div>
 
 <h2 class="text-center">Plotting Locations</h2>
-{% include "map.html" %}
+<div class="mapSection">
+  {% include "map.html" %}
+</div>
+<br>
+<br>
+<br>
+<br>
 {% endblock %}

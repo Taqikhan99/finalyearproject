@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from time import sleep, time
 from tkinter import Canvas
 from cv2 import VideoCapture
@@ -13,6 +14,7 @@ from sklearn import linear_model
 import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from datetime import date
 
 matplotlib.use('Agg')
 
@@ -51,31 +53,50 @@ def homePage():
 
 
 # user detail page route
-
-@views.route('/user/<user_id>')
-def userDetail(user_id):
-    # print(user_id)
+@views.route('/users/<user_id>',methods=['GET','POST'])
+def userDetail2(user_id):
     users = UsersGetting(cursor)
-    allRecords = users.getAllLocationRecord(user_id)
-    print(allRecords)
-    location = predictNewLocation(cursor, user_id)
+    # allRecords = users.getAllLocationRecord(user_id)
+    # print(allRecords)
+    # location = predictNewLocation(user_id)
+    # check if request=post
+    if request.method=='POST':
+        sDate=request.form['cdate']
+        sDateLocations=users.getSpecificDateLocations(user_id,sDate)
+        print(sDate)
+        # sDateTimeChart=barchart(user_id,sDate)
+        map = plotmap(sDateLocations)
+        map.save('website/templates/map.html')
+        return render_template('userdetail.html',uid=user_id,userLocationRecord=sDateLocations,sdate=sDate)
+        # return redirect('/users/<user_id>')
 
-    currentDateRecords=users.getCurrentDateLocations(user_id)
+    else:
+        currentDateRecords=users.getCurrentDateLocations(int(user_id))
 
-    map = folium.Map(location=[24.79387658, 67.1351927], max_zoom=18, zoom_start=12, height=360, width='60%', min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', bottom='5%', zoom_control=True)
-    for row in currentDateRecords:
+        map = plotmap(currentDateRecords)
+        map.save('website/templates/map.html')
+
+        return render_template('userdetail.html', uid=user_id, userLocationRecord=currentDateRecords)
+
+
+def plotmap(records):
+    map=folium.Map(location=[24.79387658, 67.1351927], max_zoom=18, zoom_start=12, height=300, width='60%', min_lat=24.6, max_lat=24.8, min_lon=66, max_lon=67.15, left='20%', top='5%', zoom_control=True)
+    for row in records:
         # print(row)
         # tooltip = str(row[1])
         folium.Circle(location=[
-         row[-2], row[-1]],
+         row[-3], row[-2]],
           radius=2,
           popup=(str(row[0])),
           color='#3186cc',
           fill=True,
           fill_color='#3186cc').add_to(map)
-    map.save('website/templates/map.html')
+    
+    
+    return map
 
-    return render_template('userdetail.html', uid=user_id, userLocationRecord=allRecords, location=location)
+
+
 
 
 # login route
@@ -157,25 +178,33 @@ def genFrames(camid):
         print(e)
         
 
-
-
-     
-
-@views.route('/barchart2/<string:userid>',methods=['GET','POST'])
-def barchart2(userid):
-
+@views.route('/barchart2/<userid>/<sdate>',methods=['GET','POST'])
+def barchart2(userid,sdate):
+    print("Today:",sdate)
     users = UsersGetting(cursor)
-    users.getCurrentDateLocations(userid)
+    timespends=users.getSpecificDateTimespend(userid,sdate)
+    print(timespends)
+    timespend=np.zeros(3)
+    for row in timespends:
+        print(row.locId)
+        timespend[row.locId-1]=row.timeSpend
+    if len(timespend)<3:
+        timespend.append(0)
+    print("TimeSpends:",timespend)
 
+    
     print('H:',userid)
-    company=['Google','Facebook','Twitter']
-    revenue=[74,56,28]
-    ypos=np.arange(len(company))
-    fig,ax=plt.subplots(figsize=(6,4))
+    Location=['TucShop','Cafeteria','SportsArea']
+    revenue=[65,59,46]
+    # timespend=[30,24,56]
+    ypos=np.arange(len(Location))
+    fig,ax=plt.subplots(figsize=(4,4))
     ax.set_title("User Daily Record")
     # ax.legend()
-    ax.set_xticks(ypos,company)
-    ax.bar(ypos,revenue)
+    ax.set_xticks(ypos,Location)
+    ax.set_xlabel('Locations')
+    ax.set_ylabel('Time Spend(min)')
+    ax.bar(ypos,timespend)
     canvas=FigureCanvas(fig)
     img=io.BytesIO()
     fig.savefig(img)
@@ -183,15 +212,42 @@ def barchart2(userid):
     return send_file(img,mimetype='img/png')
 
 
+def barchart(userid,date=date.today()):
 
+    users = UsersGetting(cursor)
+    users.getCurrentDateLocations(userid)
+
+    print('H:',userid)
+    Location=['TucShop','Cafeteria','SportsArea']
+
+    timespends=users.getSpecificDateTimespend(userid,date)
+    for row in timespends:
+        timespends=row.timeSpend
+    print("TimeSpends:",timespends)
+    # revenue=[65,59,46]
+    # timespend=[30,24,56]
+    ypos=np.arange(len(Location))
+    fig,ax=plt.subplots(figsize=(5,2))
+    ax.set_title("User Daily Record")
+    # ax.legend()
+    ax.set_xticks(ypos,Location)
+    ax.set_xlabel('Locations')
+    ax.set_ylabel('Time Spend(min)')
+    ax.bar(ypos,timespends)
+    canvas=FigureCanvas(fig)
+    img=io.BytesIO()
+    fig.savefig(img)
+    img.seek(0)
+    return send_file(img,mimetype='img/png')
 
 
 # predict next location
-def predictNewLocation(cursor, userId):
-    userLocations = UsersGetting(cursor).getUserLocationNameOrdered(userId)
-    print(len(userLocations))
-    df = pd.DataFrame(userLocations)
+def predictNewLocation(userId):
+    users= UsersGetting(cursor)
+    userLocations=users.getUserLocationNameOrdered(userId)
 
+    df = pd.DataFrame(userLocations)
+    print(df.head())
     df = pd.DataFrame((np.reshape(userLocations, (df.shape[0], 3))), columns=['locid', 'locName', 'time'])
     df['time'] = df['time'].astype(float)
     # print(df['time'])

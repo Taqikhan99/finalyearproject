@@ -41,8 +41,18 @@ class UsersGetting:
 
 
 
+    def getSpecificDateTimespend(self,userid,date):
+        self.cursor.execute("select locId,SUM(timespend) as timeSpend from tbPersonLocation where personId=? and date=format(CONVERT(date,?),'dd-MM-yy')  group by locId",userid,date)
+        personTimespend=self.cursor.fetchall()
+        return personTimespend
+
+    def getSpecificDateLocations(self,userid,date):
+        self.cursor.execute("select   * from tbPersonLocation where personId=convert(int,?) and date=format(CONVERT(date,?),'dd-MM-yy') order by time desc",userid,date)
+        personLocs=self.cursor.fetchall()
+        return personLocs
+
     def getCurrentDateLocations(self,userid):
-        self.cursor.execute("select   * from tbPersonLocation where personId=? and date=format(GETDATE(),'dd-MM-yy') order by cast(substring(date,4,2)as int )desc, cast(substring(date,1,2)as int) desc,time desc",userid)
+        self.cursor.execute("select * from tbPersonLocation where personId=? and date=format(GETDATE(),'dd-MM-yy') order by time desc",userid)
         personLocs=self.cursor.fetchall()
         return personLocs
 
