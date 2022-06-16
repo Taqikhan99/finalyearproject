@@ -169,7 +169,7 @@ class UserInsertion:
                         VALUES
                         (?,?,?)
                         
-                        ''',user_id,'user_'+str(user_id),'static/images/user_'+str(user_id))
+                        ''',user_id,'user_'+str(user_id),'images/user_'+str(user_id))
                 self.cursor.commit()
                 
                 print('Saved to database')

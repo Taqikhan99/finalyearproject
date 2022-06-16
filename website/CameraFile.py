@@ -54,7 +54,7 @@ def mainWorking(video_capture,camId,userids,cursor):
     # image id at start
     imgid=1
     # setting cameraId
-    cameraLocId=camId+2
+    cameraLocId=camId+1
     savedUserIds=userids
     
     # get camera lat long
@@ -67,8 +67,7 @@ def mainWorking(video_capture,camId,userids,cursor):
             
             # Grab a single frame of video
             sucess, frame = video_capture.read()
-            # print(sucess)
-            # print(savedUserIds)
+            
             userImg,idReturned,frame=recognize(frame,savedUserIds)
             # print("id: ",idReturned)
             # getLastLoc
@@ -118,10 +117,7 @@ def mainWorking(video_capture,camId,userids,cursor):
             
 
             return frame
-            # cv2.imshow(camNam, frame)
-            # # Hit 'z' on the keyboard to quit!
-            # if cv2.waitKey(1) & 0xFF == ord('z'):
-            #     break   
+           
     except Exception as e:
         print("Some error: ",e) 
     # Release handle to the webcam

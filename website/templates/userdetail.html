@@ -19,11 +19,20 @@
     <div class="text-center">
       
       <img src="{{url_for('views.barchart2',userid=uid,sdate=sdate)}}" alt="">
-      <img src="{{timeSpendChart}}" alt="">
+      
       <br>
     </div>
     </div>  
 
+</div>
+<br>
+<br>
+<div class="row">
+  <div class="col">
+    <div class="text-center">
+      <a class="btn btn-primary " href="{{url_for('views.showmap')}}">Show Detail map</a>
+    </div>
+  </div>
 </div>
 <div class="row">
     <!-- <div class="col latlongtable border border-primary">
@@ -59,9 +68,12 @@
 </div>
 
 <h2 class="text-center">Plotting Locations</h2>
+
 <div class="mapSection">
   {% include "map.html" %}
+  
 </div>
+
 <br>
 <br>
 <br>
