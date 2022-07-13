@@ -3,7 +3,7 @@ from flask import Flask, redirect,render_template, request,flash,session,Respons
 
 import os
 # from main import startProject
-from .dbconnection import DbConnection
+from .dbConnection import DbConnection
 from .training import trainingImages
 
 
@@ -13,7 +13,7 @@ def createApp():
 
     app.secret_key=os.urandom(20)
 
-    from .views2 import views
+    from .views import views
     app.register_blueprint(views,url_prefix='/')
     return app
 

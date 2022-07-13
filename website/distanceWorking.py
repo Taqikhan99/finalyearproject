@@ -82,6 +82,21 @@ def face_data2(image,focalLength):
         cv2.putText(
             image, f"Dist = {round(distance,1)} ft", (x+10, y-20), fonts, 0.6, (WHITE), 1)
     
+    return 
+    
+
+def face_data3(image,focalLength,w):
+    face_width = 0
+    distance=0
+    # gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # gray_image=
+    # faces = face_detector.detectMultiScale(image, 1.3, 10)
+    # for (x, y, h, w) in faces:
+        # cv2.rectangle(image, (x, y), (x + w, y + h), WHITE, 1)
+    face_width = w/305
+        
+    distance=distance_finder(focalLength, KNOWN_WIDTH, face_width)
+        
     return distance
 
 # reading reference image from directory

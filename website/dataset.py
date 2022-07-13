@@ -1,3 +1,4 @@
+
 import cv2,time,numpy as np
 from pathlib import Path
 
@@ -5,8 +6,8 @@ class DatasetGenerator:
 
     imgid=1
     def convertToGray(self,img):
-        
-        gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+        gray=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
         # gray=self.resizeImg(gray)
         return gray
 
@@ -40,10 +41,10 @@ class DatasetGenerator:
         Path("website/static/images/user_{}".format(userid)).mkdir(parents=True,exist_ok=True)
         
         try:
-               
+            img=self.convertToGray(img)    
             while self.imgid<=3:
-
-                # img=self.convertToGray(img)   
+                
+                  
                 img=self.resizeImg(img)
                 flipImg=self.flipImg(img)
                 sharpenedImg=self.sharpen(img)

@@ -3,16 +3,22 @@
 {% block title %} Home {% endblock %}
 {% block content %}
 
+<!-- html template code -->
 <h2 class="text-center">
     Cameras Feed
 </h2>
-<div class="container">
-    <div class="jumbotron p-3">
-        
-        <img src="{{url_for('views.video1')}}"  width="40%">
-        <img src="{{url_for('views.video2')}}"  width="40%">
+<div class="container-fluid p-4 d-flex justify-content-center">
+    <div class="jumbotron border border-secondary">
+        <h3>Camera 1</h3>
+        <img src="{{url_for('views.video1')}}"  width="90%" height="600px">
         
     </div>
+    <div class="jumbotron border border-secondary">
+        <h3>Camera 2</h3>
+        <img src="{{url_for('views.video2')}}"  width="90%" height="600px">
+        
+    </div>
+    
     
 </div>
 
