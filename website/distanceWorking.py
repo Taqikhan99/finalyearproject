@@ -99,25 +99,3 @@ def face_data3(image,focalLength,w):
         
     return distance
 
-# reading reference image from directory
-# ref_image = cv2.imread("testimage.jpg")
-
-# # ref_image=cv2.resize(ref_image,(300,300))
-# ref_image_face_width = face_data(ref_image)
-# focal_length_found = focal_length(KNOWN_DISTANCE, KNOWN_WIDTH, 0.436)
-# print(focal_length_found)
-# # cv2.imshow("ref_image", ref_image)
-
-# while True:
-#     _, frame = cap.read()
-     
-#     # calling face_data function
-#     face_width_in_frame,Distance = face_data2(frame,focal_length_found)
-#     # finding the distance by calling function Distance
-    
-        
-#     cv2.imshow("frame", frame)
-#     if cv2.waitKey(10) == ord("q"):
-#         break
-# cap.release()
-# cv2.destroyAllWindows()

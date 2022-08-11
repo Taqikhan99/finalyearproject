@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %} predictions {% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="row">
+        <div class="col">
+            <div class="h1">Path Predictions</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="formpred">
+                <div class="form-group">
+                  <label for="userids"><h3>Select user id</h3> </label>
+                  <select name="userlist" id="userlist">
+                    
+                        {% for x in users %}
+                        <option  class="options" value={{x}}>user_{{x}}</option>
+                        {% endfor %}
+                    
+                  </select>
+                </div>
+                <div class="form-group">
+                    <label for="userids"><h3>Select date</h3> </label>
+                    <input type="date" name="cdate" id="cdate">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Predict</button>
+              </form>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col" >
+            <h4 id="showpath" ></h4>
+        </div>
+    </div>
+
+
+   
+
+</div>
+
+<script src="{{url_for('static',filename='js/predictions.js')}}"></script>
+{% endblock %}

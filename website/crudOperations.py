@@ -50,16 +50,30 @@ class UsersGetting:
             self.userIds.append(userdata[row][0])
         return self.userIds
 
+    def getUserAllLocations(self,userid):
+        self.cursor.execute("select * from tbPersonLocation2 where personId= convert(int,?)",userid)
+        rows=self.cursor.fetchall()
+        return rows
+
+    def getLocationNames(self):
+        self.cursor.execute('Select locName from tbLocation')
+        locationNames=[]
+        output=self.cursor.fetchall()
+        for x in output:
+            locationNames.append(x[0])
+        return locationNames
+
+
     def getSpecificDateTimespend(self, userid, date):
         self.cursor.execute(
-            "select locId,SUM(timespend) as timeSpend from tbPersonLocation where personId=? and date=format(CONVERT(date,?),'dd-MM-yy')  group by locId", userid, date)
+            "select locId,SUM(timespend) as timeSpend from tbPersonLocation2 where personId=? and date=?  group by locId", userid, date)
         personTimespend = self.cursor.fetchall()
         return personTimespend
 
 
     def getUserLocationForPrediction(self,userid,date):
         self.cursor.execute(
-            "select tbPersonLocation.locId from tbPersonLocation where personId=? and date=format(CONVERT(date,?),'dd-MM-yy') order by substring(date,4,2) desc,substring(date,1,2) desc, time desc",userid,date
+            "select tbPersonLocation2.locId from tbPersonLocation2 where personId=? and date=format(CONVERT(date,?),'dd-MM-yy') order by substring(date,4,2) desc,substring(date,1,2) desc, time desc",userid,date
         )
         rows= self.cursor.fetchall()
         arr=[]
@@ -68,47 +82,52 @@ class UsersGetting:
             arr.append(row[0])
         return arr
         
+    def getAllLocations(self):
+        self.cursor.execute('Select locId,locName,latitude,longitude from tbLocation')
+        locations=self.cursor.fetchall()
+        return locations
+
+
 
     def getSpecificDateLocations(self, userid, date):
         self.cursor.execute(
-            "select   * from tbPersonLocation where personId=convert(int,?) and date=format(CONVERT(date,?),'dd-MM-yy') order by time desc", userid, date)
+            "select   * from tbPersonLocation2 where personId=convert(int,?) and date=? order by time desc", userid, date)
         personLocs = self.cursor.fetchall()
         return personLocs
 
     def getCurrentDateLocations(self, userid):
         self.cursor.execute(
-            "select * from tbPersonLocation where personId=? and date=format(GETDATE(),'dd-MM-yy') order by time desc", userid)
+            "select * from tbPersonLocation2 where personId=? and date=format(GETDATE(),'dd/MM/yy') order by time desc", userid)
         personLocs = self.cursor.fetchall()
         return personLocs
 
     def getAllLocationRecord(self, userid):
         self.cursor.execute(
-            'Select * from tbPersonLocation where personId=?', userid)
+            'Select * from tbPersonLocation2 where personId=?', userid)
         personLocs = self.cursor.fetchall()
         return personLocs
 
     def getUserLocations(self):
 
-        self.cursor.execute('Select locId,personId from tbPersonLocation')
+        self.cursor.execute('Select locId,personId from tbPersonLocation2')
         personLocs = self.cursor.fetchall()
         return personLocs
 
     def getUserLocationsById(self, userId):
 
-        self.cursor.execute('select distinct locid,Max(time) from tbPersonLocation where personId=?',
+        self.cursor.execute('select distinct locid,Max(time) from tbPersonLocation2 where personId=?',
                             userId, ' Group by locId order by Max(time) desc,locId')
         personLoc = self.cursor.fetchall()
 
         return personLoc
 
-    # getting timespend by user group by locations
 
     # get last location id and last date time
 
     def getLastLocationId(self, userId):
         try:
             self.cursor.execute(
-                'select top 1 locId,date,time from tbPersonLocation where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc', userId)
+                'select top 1 locId,date,time from tbPersonLocation2 where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc', userId)
             rows = self.cursor.fetchall()
             for row in rows:
 
@@ -119,7 +138,7 @@ class UsersGetting:
     def getUserLastLocTime(self, userId):
         try:
             self.cursor.execute(
-                'select top 1 date,time from tbPersonLocation where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc', userId)
+                'select top 1 date,time from tbPersonLocation2 where personId= ? order by substring(date,4,2) desc,substring(date,1,2) desc,time desc', userId)
             rows = self.cursor.fetchall()
             for row in rows:
                 date = row.date
@@ -205,12 +224,12 @@ class UserInsertion:
 
         now = datetime.now()
 
-        currentTime = now.strftime("%H:%M:%S")
-        currentDate = now.strftime("%d-%m-%y")
+        currentTime = now.strftime("%H:%M")
+        currentDate = now.strftime("%d/%m/%y")
         print(currentDate)
 
         self.cursor.execute('''
-                insert into tbPersonLocation(locId,personId,date,time,latitude,longitude,timespend)
+                insert into tbPersonLocation2(locId,personId,date,time,latitude,longitude,timespend)
                 Values
                 (?,?,?,?,?,?,?)
         ''', (locId, user_id, currentDate, currentTime, lat, long,1))
@@ -218,24 +237,18 @@ class UserInsertion:
         self.cursor.commit()
         # cursor.close()
 
-    def updateTimespend(self, userId, locId, date, time, timespend):
 
+    def insertLocation(self,locname,latitude,longitude):
         self.cursor.execute('''
-        update tbPersonLocation 
-        set timespend=? where date=? and time=? and personId=? and locId=?
-        ''', (timespend, date, time, userId, locId))
+                insert into tbLocation(locName,latitude,longitude)
+                Values
+                (?,?,?)
+        ''', (locname,latitude,longitude))
         self.cursor.commit()
+        print('Location Saved to database')
 
 
-# conn=DbConnection()
-# conn.connectToDb()
-# cursor=conn.getCursor()
-# users=UsersGetting(cursor)
+    
 
 
-# lastime=users.getUserLastLocTime(4)
-# print(lastime)
-# uDate,uTime=users.getUserLastLocTime(5)
-# uDateTime=uDate+" "+uTime
-# print(uDateTime)
-# calcTimeDifference(uDateTime)
+

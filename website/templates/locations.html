@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %} predictions {% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid ">
+    <h1 class="text-center my-4">
+        Locations Page
+    </h1>
+
+
+
+    <div class="row my-5">
+        <div class="col">
+            <div class=" container locationlist p-1 bg-light">
+                <div class="row d-flex justify-content-center">
+                {% for x in locations %}
+
+                    <div style="cursor: pointer;" class=" border border-dark p-1 mx-5 my-3 border col-sm-12 col-md-3 location d-flex flex-column align-items-center">
+                        <!-- <img style="width: 100%;height:150px" src="{{url_for('static',filename='locationimages/pic{}.jpg'.format(x.locId))}}" alt=""> -->
+                        <h5>Location name: {{x.locName}}</h5>
+                        <p>Latitude: {{x.latitude}}</p>
+                        <p>Longitude: {{x.longitude}}</p>
+                        
+
+                    </div>
+
+                    
+
+                {% endfor %}
+                </div>
+            <br>
+            <div class="row my-3">
+                <div class="col text-center">
+                    <button class="btn btn-lg btn-primary newlocbtn">Add New Location</button>
+                </div>
+                
+            </div>
+            </div>
+        </div>
+    </div>
+    <br>
+<div class="container newlocAdding ">
+    <div class="row">
+
+        <div class="col mb-5">
+            <form id="formAddLoc">
+                <div class="form-group">
+                  <label for="locname">Location Name</label>
+                  <input type="text" class="form-control" id="locname"  placeholder="Enter location name">
+                  
+                </div>
+                <div class="form-group">
+                  <label for="latitude">Latitude</label>
+                  <input type="text" readonly="readonly" class="form-control" id="latitude" placeholder="Latitude">
+                </div>
+                <div class="form-group">
+                  <label for="longitude">Longitude</label>
+                  <input type="text" readonly="readonly" class="form-control" id="longitude" placeholder="Longitude">
+                </div>
+                <div id="mapcanvas" style="height: 300px;width:100%">
+
+                </div>
+               
+                <br>
+                <button type="submit" class="btn btn-primary btn-block">Add</button>
+              </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+
+
+    
+
+
+
+
+</div>
+<script src="{{url_for('static',filename='js/locations.js')}}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAr0gHE2TnQoU_FiRdns9cRKo0fqBW0KQ&callback=initMap"></script>
+
+
+{% endblock %}

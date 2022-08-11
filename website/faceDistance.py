@@ -1,7 +1,5 @@
 import cv2
-import cvzone
 
-from cvzone.FaceMeshModule import FaceMeshDetector
 
 # cap=cv2.VideoCapture(0)
 # detector=FaceMeshDetector(maxFaces=1)

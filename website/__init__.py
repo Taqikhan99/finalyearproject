@@ -21,6 +21,6 @@ def createApp():
 
 def connectToDb():
     conn=DbConnection()
-    conn.connectToDb() 
+    con=conn.connectToDb() 
     cursor=conn.getCursor()
     return cursor
