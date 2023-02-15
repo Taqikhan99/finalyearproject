@@ -39,4 +39,4 @@ longitude and plot them on the map.
 ![Login Image](DemoImages/UserDetailpage.PNG)
 
 ### Camera Page
-![Login Image](DemoImages/Camera.PNG)
+![Login Image](DemoImages/Camera Page.PNG)
