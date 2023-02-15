@@ -34,3 +34,9 @@ longitude and plot them on the map.
 
 ### HomePage
 ![Login Image](DemoImages/Homepage.PNG)
+
+### UserDetail Page
+![Login Image](DemoImages/UserDetailpage.PNG)
+
+### Camera Page
+![Login Image](DemoImages/Camera.PNG)
